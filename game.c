@@ -3,6 +3,20 @@
 #include "bubble.h"
 #include "harpoon.h"
 
+double sgn(double x) {
+	return x<0?-1:(x>0?1:0);
+}
+
+bool hitrectrect(double r1x, double r1y, double r1w, double r1h, double r2x, double r2y, double r2w, double r2h) {
+  if (r1x + r1w >= r2x &&
+      r1x <= r2x + r2w &&
+      r1y + r1h >= r2y &&
+      r1y <= r2y + r2h) {
+        return true;
+  }
+  return false;
+}
+
 int main() {
 
 	bool quit=false;
@@ -14,6 +28,8 @@ int main() {
 	GLuint playerTexture;
 	GLuint bubbleTextures[4];
 	GLuint harpoonTextures[2];
+
+	srand(time(NULL));
 
 	glScreenInit(SCREEN_WIDTH,SCREEN_HEIGHT);
 	glfwSetWindowTitle(GAME_TITLE);
@@ -67,21 +83,47 @@ int main() {
 			SCREEN_HEIGHT-playerImage.height,
 			4);
 
-	Bubble *bubble=Bubble_New(
-			bubbleImages,
-			(SCREEN_WIDTH-bubbleImages[3].width)/2,
-			0,
-			3,
-			2,1);
+	Bubble *bubbles[100];
+	int numBubbles=0;
 
 	Harpoon *harpoon=NULL;
+
+	int bubbleSpawnCounter=0;
+
+	bubbles[numBubbles]=Bubble_New(
+			bubbleImages,
+			rand()%(SCREEN_WIDTH-bubbleImages[3].width),
+			0,
+			3,
+			(rand()%2?1:-1)*0.5,0);
+
+	numBubbles++;
+
 
 	while(!quit) {
 
     glClearColor( 0xCA/255.0f, 0xDC/255.0f, 0x9F/255.0f, 0xFF/255.0f );
     glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 
-		Bubble_Update(bubble);
+		bubbleSpawnCounter++;
+
+		if(bubbleSpawnCounter>=600) {
+			bubbleSpawnCounter=0;
+			bubbles[numBubbles]=Bubble_New(
+					bubbleImages,
+					rand()%(SCREEN_WIDTH-bubbleImages[3].width),
+					0,
+					3,
+					(rand()%2?1:-1)*0.5,0);
+
+			numBubbles++;
+		}
+
+
+		for(int i=0;i<numBubbles;i++) {
+			Bubble_Update(bubbles[i]);
+		}
+		
 		Player_Update(player);
 
 		if(player->state==PLAYER_STATE_FIRING) {
@@ -99,13 +141,65 @@ int main() {
 			if(harpoon->y<=0) {
 				player->canFire=true;
 				Harpoon_Delete(&harpoon);
+			} else { 
+			
+				for(int i=0;i<numBubbles;i++) {
+				
+					if(hitrectrect(
+							bubbles[i]->x,
+							bubbles[i]->y,
+							bubbles[i]->images[bubbles[i]->size].width,
+							bubbles[i]->images[bubbles[i]->size].height,
+							harpoon->x,
+
+							harpoon->y,
+							harpoon->images[1].width,
+							SCREEN_HEIGHT-harpoon->y)) {
+					
+						player->canFire=true;
+						Harpoon_Delete(&harpoon);
+
+						if(bubbles[i]->size>0) {
+							bubbles[i]->size--;
+							bubbles[numBubbles]=Bubble_New(
+								bubbleImages,
+								bubbles[i]->x-8,
+								bubbles[i]->y,
+								bubbles[i]->size,
+								bubbles[i]->vx,
+								bubbles[i]->vy
+							);
+
+							bubbles[numBubbles]->dx=-fabs(bubbles[i]->dx);
+							bubbles[numBubbles]->dy=bubbles[i]->dy;
+							bubbles[i]->x+=8;
+							bubbles[i]->dx=fabs(bubbles[i]->dx);
+							numBubbles++;
+							break;
+						} else {
+							for(int j=i;j<numBubbles-1;j++) {
+								bubbles[j]=bubbles[j+1];
+							}
+							numBubbles--;
+							break;
+						}
+
+					}
+				}
 			}
 		}
 
-		Bubble_Draw(bubble);	
+	
+		for(int i=0;i<numBubbles;i++) {
+			Bubble_Draw(bubbles[i]);	
+		}
+
+
 		Player_Draw(player);			
 
-		if(harpoon) Harpoon_Draw(harpoon);
+		if(harpoon) {
+			Harpoon_Draw(harpoon);
+		}
 
 		float TimeStart=glfwGetTime();
 		while((glfwGetTime()-TimeStart)<(1.0/100.0)){};
@@ -116,12 +210,16 @@ int main() {
 	}
 	
 	if(harpoon) Harpoon_Delete(&harpoon);
-	Bubble_Delete(&bubble);
+
+	for(int i=0;i<numBubbles;i++) {
+		Bubble_Delete(&bubbles[i]);
+	}
+	
 	Player_Delete(&player);
 
 	glDeleteTextures(1,&playerTexture);
-	glDeleteTextures(4,&bubbleTextures[0]);
-	glDeleteTextures(2,&harpoonTextures[0]);
+	glDeleteTextures(4,bubbleTextures);
+	glDeleteTextures(2,harpoonTextures);
 
 	glfwTerminate();
 

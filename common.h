@@ -15,8 +15,8 @@
 #define SCREEN_WIDTH 320
 #define SCREEN_HEIGHT 240
 
-#define GRAVITY 0.75
-#define JUMP_HEIGHT 15
+#define GRAVITY 0.098
+#define JUMP_HEIGHT 2
 
 #endif
 

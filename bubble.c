@@ -10,7 +10,7 @@ Bubble *Bubble_New(glImage *images,double x,double y,int size,double vx,double v
 		bubble->size=size;
 		bubble->vx=vx;
 		bubble->vy=vy;
-		bubble->dx=vx*(rand()%2?1:-1);
+		bubble->dx=vx;
 		bubble->dy=vy;
 		bubble->g=GRAVITY;
 	}
@@ -55,3 +55,4 @@ void Bubble_Update(Bubble *bubble) {
 	}
 
 }
+
