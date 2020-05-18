@@ -142,6 +142,7 @@ int main() {
 			if(harpoon->y<=0) {
 				player->canFire=true;
 				Harpoon_Delete(&harpoon);
+				break;
 			} else { 
 			
 				for(int i=0;i<numBubbles;i++) {
@@ -189,7 +190,6 @@ int main() {
 			}
 		}
 
-	
 		for(int i=0;i<numBubbles;i++) {
 			Bubble_Draw(bubbles[i]);	
 		}
@@ -214,8 +214,9 @@ int main() {
 	for(int i=0;i<numBubbles;i++) {
 		Bubble_Delete(&bubbles[i]);
 	}
-	
+
 	Player_Delete(&player);
+
 
 	glDeleteTextures(1,&playerTexture);
 	glDeleteTextures(4,bubbleTextures);
