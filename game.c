@@ -83,7 +83,7 @@ int main() {
 			SCREEN_HEIGHT-playerImage.height,
 			4);
 
-	Bubble *bubbles[100];
+	Bubble *bubbles[BUBBLES_MAX];
 	int numBubbles=0;
 
 	Harpoon *harpoon=NULL;
@@ -106,17 +106,18 @@ int main() {
     glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 
 		bubbleSpawnCounter++;
-
 		if(bubbleSpawnCounter>=600) {
 			bubbleSpawnCounter=0;
-			bubbles[numBubbles]=Bubble_New(
-					bubbleImages,
-					rand()%(SCREEN_WIDTH-bubbleImages[3].width),
-					0,
-					3,
-					(rand()%2?1:-1)*0.5,0);
+			if(numBubbles<BUBBLES_MAX) {
+				bubbles[numBubbles]=Bubble_New(
+						bubbleImages,
+						rand()%(SCREEN_WIDTH-bubbleImages[3].width),
+						0,
+						3,
+						(rand()%2?1:-1)*0.5,0);
 
-			numBubbles++;
+				numBubbles++;
+			}
 		}
 
 
@@ -151,7 +152,6 @@ int main() {
 							bubbles[i]->images[bubbles[i]->size].width,
 							bubbles[i]->images[bubbles[i]->size].height,
 							harpoon->x,
-
 							harpoon->y,
 							harpoon->images[1].width,
 							SCREEN_HEIGHT-harpoon->y)) {
