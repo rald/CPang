@@ -162,11 +162,13 @@ int main() {
 			
 				for(int i=0;i<numBubbles;i++) {
 				
-					if(hitrectrect(
-							bubbles[i]->x,
-							bubbles[i]->y,
-							bubbles[i]->images[bubbles[i]->size].width,
-							bubbles[i]->images[bubbles[i]->size].height,
+					double r=bubbles[i]->images[bubbles[i]->size].width/2;
+
+
+					if(hitcircrect(
+							bubbles[i]->x+r,
+							bubbles[i]->y+r,
+							r,
 							harpoon->x,
 							harpoon->y,
 							harpoon->images[1].width,
