@@ -18,7 +18,7 @@
 #define GRAVITY 0.098
 #define JUMP_HEIGHT 5
 
-#define BUBBLES_MAX 5
+#define BUBBLES_MAX 100
 
 #endif
 

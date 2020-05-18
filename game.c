@@ -90,16 +90,6 @@ int main() {
 
 	int bubbleSpawnCounter=0;
 
-	bubbles[numBubbles]=Bubble_New(
-			bubbleImages,
-			rand()%(SCREEN_WIDTH-bubbleImages[3].width),
-			0,
-			3,
-			(rand()%2?1:-1)*0.5,0);
-
-	numBubbles++;
-
-
 	while(!quit) {
 
     glClearColor( 0xCA/255.0f, 0xDC/255.0f, 0x9F/255.0f, 0xFF/255.0f );
@@ -161,22 +151,24 @@ int main() {
 						Harpoon_Delete(&harpoon);
 
 						if(bubbles[i]->size>0) {
-							bubbles[i]->size--;
-							bubbles[numBubbles]=Bubble_New(
-								bubbleImages,
-								bubbles[i]->x-8,
-								bubbles[i]->y,
-								bubbles[i]->size,
-								bubbles[i]->vx,
-								bubbles[i]->vy
-							);
+							if(numBubbles<BUBBLES_MAX) {
+								bubbles[i]->size--;
+								bubbles[numBubbles]=Bubble_New(
+									bubbleImages,
+									bubbles[i]->x-8,
+									bubbles[i]->y,
+									bubbles[i]->size,
+									bubbles[i]->vx,
+									bubbles[i]->vy
+								);
 
-							bubbles[numBubbles]->dx=-fabs(bubbles[i]->dx);
-							bubbles[numBubbles]->dy=bubbles[i]->dy;
-							bubbles[i]->x+=8;
-							bubbles[i]->dx=fabs(bubbles[i]->dx);
-							numBubbles++;
-							break;
+								bubbles[numBubbles]->dx=-fabs(bubbles[i]->dx);
+								bubbles[numBubbles]->dy=bubbles[i]->dy;
+								bubbles[i]->x+=8;
+								bubbles[i]->dx=fabs(bubbles[i]->dx);
+								numBubbles++;
+								break;
+							}
 						} else {
 							for(int j=i;j<numBubbles-1;j++) {
 								bubbles[j]=bubbles[j+1];
