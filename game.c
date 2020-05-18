@@ -166,6 +166,7 @@ int main() {
 								numBubbles++;
 								bubbles[i]->x+=8;
 								bubbles[i]->dx=fabs(bubbles[i]->dx);
+								break;
 							}
 						} else {
 							Bubble_Delete(&bubbles[i]);
@@ -173,6 +174,7 @@ int main() {
 								bubbles[j]=bubbles[j+1];
 							}
 							numBubbles--;
+							break;
 						}
 
 					}
