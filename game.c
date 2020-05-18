@@ -3,6 +3,10 @@
 #include "bubble.h"
 #include "harpoon.h"
 
+double drand() {
+	return rand()/(RAND_MAX+1.0);
+} 
+
 double sgn(double x) {
 	return x<0?-1:(x>0?1:0);
 }
@@ -130,8 +134,8 @@ int main() {
 						rand()%(SCREEN_WIDTH-bubbleImages[3].width),
 						0,
 						3,
-						(rand()%2?1:-1),0);
-
+						(rand()%2?1:-1)*drand(),
+						(rand()%2?1:-1)*drand());
 				numBubbles++;
 			}
 		}
