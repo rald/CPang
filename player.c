@@ -13,14 +13,16 @@ Player *Player_New(glImage image,double x,double y,double speed) {
 		player->g=GRAVITY;
 		player->jumpHeight=JUMP_HEIGHT;
 		player->canJump=false;
+		player->canFire=true;
 		player->state=PLAYER_STATE_JUMPING;
 	}
 
 	return player;
 }
 
-void Player_Delete(Player *player) {
-	free(player);
+void Player_Delete(Player **player) {
+	free(*player);
+	*player=NULL;
 }
 
 void Player_UpdateIdle(Player *player) {
@@ -44,6 +46,11 @@ void Player_UpdateIdle(Player *player) {
 			player->dy=-player->jumpHeight;
 			player->canJump=false;
 		}
+	}
+
+	if(glfwGetKey('K')==GLFW_PRESS) {
+		player->state=PLAYER_STATE_FIRING;
+		player->canFire=false;
 	}
 
 	player->dy+=player->g;
@@ -82,6 +89,10 @@ void Player_UpdateWalking(Player *player) {
 			player->dy=-player->jumpHeight;
 			player->canJump=false;
 		}
+	}
+
+	if(glfwGetKey('K')==GLFW_PRESS) {
+		player->state=PLAYER_STATE_FIRING;
 	}
 
 	player->dy+=player->g;
@@ -125,6 +136,10 @@ void Player_UpdateJumping(Player *player) {
 
 }
 
+void Player_UpdateFiring(Player *player) {
+	player->state=PLAYER_STATE_IDLE;
+}
+
 void Player_Draw(Player *player) {
 	glSprite(player->x,player->y,GL2D_FLIP_NONE,&player->image);
 }
@@ -134,5 +149,6 @@ void Player_Update(Player *player) {
 		case PLAYER_STATE_IDLE: Player_UpdateIdle(player); break;
 		case PLAYER_STATE_WALKING: Player_UpdateWalking(player); break;
 		case PLAYER_STATE_JUMPING: Player_UpdateJumping(player); break;
+		case PLAYER_STATE_FIRING: Player_UpdateFiring(player); break;
 	}
 }

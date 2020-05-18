@@ -21,7 +21,7 @@ Bubble *Bubble_New(
 		int size,
 		double vx,double vy);
 
-void Bubble_Delete(Bubble *bubble);
+void Bubble_Delete(Bubble **bubble);
 void Bubble_Draw(Bubble *bubble);
 void Bubble_Update(Bubble *bubble);
 

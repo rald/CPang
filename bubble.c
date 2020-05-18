@@ -18,8 +18,9 @@ Bubble *Bubble_New(glImage *images,double x,double y,int size,double vx,double v
 	return bubble;
 }
 
-void Bubble_Delete(Bubble *bubble) {
-	free(bubble);
+void Bubble_Delete(Bubble **bubble) {
+	free(*bubble);
+	*bubble=NULL;
 }
 
 void Bubble_Draw(Bubble *bubble) {

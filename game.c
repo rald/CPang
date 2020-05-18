@@ -1,6 +1,7 @@
 #include "common.h"
 #include "player.h"
 #include "bubble.h"
+#include "harpoon.h"
 
 int main() {
 
@@ -8,9 +9,11 @@ int main() {
 
 	glImage playerImage;
 	glImage bubbleImages[4];
+	glImage harpoonImages[2];
 
 	GLuint playerTexture;
 	GLuint bubbleTextures[4];
+	GLuint harpoonTextures[2];
 
 	glScreenInit(SCREEN_WIDTH,SCREEN_HEIGHT);
 	glfwSetWindowTitle(GAME_TITLE);
@@ -46,6 +49,18 @@ int main() {
 			64,64,
 			GL_NEAREST);
 
+	harpoonTextures[0]=glLoadSprite(
+			"images/spear.tga",
+			&harpoonImages[0],
+			16,16,
+			GL_NEAREST);
+
+	harpoonTextures[1]=glLoadSprite(
+			"images/rope.tga",
+			&harpoonImages[1],
+			16,16,
+			GL_NEAREST);
+
 	Player *player=Player_New(
 			playerImage,
 			(SCREEN_WIDTH-playerImage.width)/2,
@@ -59,6 +74,8 @@ int main() {
 			3,
 			2,1);
 
+	Harpoon *harpoon=NULL;
+
 	while(!quit) {
 
     glClearColor( 0xCA/255.0f, 0xDC/255.0f, 0x9F/255.0f, 0xFF/255.0f );
@@ -67,8 +84,28 @@ int main() {
 		Bubble_Update(bubble);
 		Player_Update(player);
 
+		if(player->state==PLAYER_STATE_FIRING) {
+			if(!harpoon) {
+				harpoon=Harpoon_New(
+						harpoonImages,
+						(player->image.width-harpoonImages[0].width)/2+player->x,
+						(player->image.height)+player->y,
+						4);
+			}
+		}
+
+		if(harpoon) {
+			Harpoon_Update(harpoon);
+			if(harpoon->y<=0) {
+				player->canFire=true;
+				Harpoon_Delete(&harpoon);
+			}
+		}
+
 		Bubble_Draw(bubble);	
 		Player_Draw(player);			
+
+		if(harpoon) Harpoon_Draw(harpoon);
 
 		float TimeStart=glfwGetTime();
 		while((glfwGetTime()-TimeStart)<(1.0/100.0)){};
@@ -78,13 +115,13 @@ int main() {
 		quit=glfwGetKey(GLFW_KEY_ESC) | !glfwGetWindowParam(GLFW_OPENED);
 	}
 	
-	Player_Delete(player);
+	if(harpoon) Harpoon_Delete(&harpoon);
+	Bubble_Delete(&bubble);
+	Player_Delete(&player);
 
 	glDeleteTextures(1,&playerTexture);
-	glDeleteTextures(1,&bubbleTextures[0]);
-	glDeleteTextures(1,&bubbleTextures[1]);
-	glDeleteTextures(1,&bubbleTextures[2]);
-	glDeleteTextures(1,&bubbleTextures[3]);
+	glDeleteTextures(4,&bubbleTextures[0]);
+	glDeleteTextures(2,&harpoonTextures[0]);
 
 	glfwTerminate();
 
