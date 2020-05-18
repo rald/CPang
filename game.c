@@ -132,7 +132,6 @@ int main() {
 			if(harpoon->y<=0) {
 				player->canFire=true;
 				Harpoon_Delete(&harpoon);
-				break;
 			} else { 
 			
 				for(int i=0;i<numBubbles;i++) {
@@ -164,17 +163,16 @@ int main() {
 
 								bubbles[numBubbles]->dx=-fabs(bubbles[i]->dx);
 								bubbles[numBubbles]->dy=bubbles[i]->dy;
+								numBubbles++;
 								bubbles[i]->x+=8;
 								bubbles[i]->dx=fabs(bubbles[i]->dx);
-								numBubbles++;
-								break;
 							}
 						} else {
+							Bubble_Delete(&bubbles[i]);
 							for(int j=i;j<numBubbles-1;j++) {
 								bubbles[j]=bubbles[j+1];
 							}
 							numBubbles--;
-							break;
 						}
 
 					}
