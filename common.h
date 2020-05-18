@@ -15,7 +15,7 @@
 #define SCREEN_WIDTH 320
 #define SCREEN_HEIGHT 240
 
-#define GRAVITY 0.75
+#define GRAVITY 0.098
 #define JUMP_HEIGHT 4
 
 #define BUBBLES_MAX 100
