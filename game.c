@@ -104,7 +104,7 @@ int main() {
 						rand()%(SCREEN_WIDTH-bubbleImages[3].width),
 						0,
 						3,
-						(rand()%2?1:-1)*0.5,0);
+						(rand()%2?1:-1),0);
 
 				numBubbles++;
 			}
